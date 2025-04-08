@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: discovery-server-svc
+spec:
+  selector:
+    app: discovery-server
+  ports:
+    - port: 80
+      targetPort: 8761

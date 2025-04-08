@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: discovery-server
+spec:
+  selector:
+    matchLabels:
+      app: discovery-server
+  template:
+    metadata:
+      labels:
+        app: discovery-server
+    spec:
+      containers:
+        - name: discovery-server
+          image: affan341/discovery-server:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8761
