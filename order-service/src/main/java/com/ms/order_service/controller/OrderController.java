@@ -28,7 +28,10 @@ public class OrderController {
     }
     public CompletableFuture<String> fallbackMethod(OrderRequest orderRequest, RuntimeException e) {
 
-   
+        System.out.println("hey");
+        
+
+
         return CompletableFuture.supplyAsync(() -> "Oops, something went wrong");
 
     }
