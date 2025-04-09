@@ -61,13 +61,19 @@ pipeline {
                 }
             }
         }
-       stage('Clean Up Old Docker Resources') {
-           steps {
-               echo "Stopping and removing old containers/volumes..."
-               sh 'docker-compose -f docker-compose.yml down -v --remove-orphans || true'
-               sh 'docker system prune -af || true'
-               sh 'docker volume prune -f || true'
-           }
+        stage('Clean Up Old Docker Resources') {
+                    steps {
+                        echo "Stopping and removing old containers/volumes..."
+                        sh 'docker-compose -f docker-compose.yml down -v --remove-orphans || true'
+                        sh 'docker system prune -af || true'
+                        sh 'docker volume prune -f || true'
+                    }
+                 }
+        stage('Run Docker Compose') {
+            steps {
+                echo "Starting up services with Docker Compose..."
+                sh 'docker-compose -f docker-compose.yml up -d'
+            }
         }
     }
 }
