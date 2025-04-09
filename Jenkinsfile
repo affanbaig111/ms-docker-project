@@ -6,7 +6,7 @@ pipeline {
     }
 
     environment {
-        GIT_COMMIT = ''  // Will store the short commit hash
+        DOCKERHUB_CREDENTIALS = credentials('docker-hub-creds')
     }
 
     stages {
@@ -17,9 +17,6 @@ pipeline {
                     extensions: [],
                     userRemoteConfigs: [[url: 'https://github.com/affanbaig111/ms-docker-project']]
                 )
-                script {
-                    GIT_COMMIT = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
-                }
             }
         }
 
@@ -31,15 +28,15 @@ pipeline {
             }
         }
 
-       steps {
-               dir('api-gateway') {
-                   echo "Packaging API Gateway JAR..."
-                   sh 'mvn clean package -DskipTests'
+        stage('Build API Gateway with Dockerfile') {
+            steps {
+                dir('api-gateway') {
+                    echo "Packaging API Gateway JAR..."
+                    sh 'mvn clean package -DskipTests'
 
-                   echo "Building and pushing API Gateway Docker image..."
-                   sh 'docker build -t affan341/api-gateway:${GIT_COMMIT} .'
-                   sh 'docker push affan341/api-gateway:${GIT_COMMIT}'
-               }
+                    echo "Building and pushing API Gateway Docker image..."
+                    sh 'docker build -t affan341/api-gateway:latest .'
+                    sh 'docker push affan341/api-gateway:latest'
                 }
             }
         }
@@ -57,8 +54,8 @@ pipeline {
 
                     for (svc in jibServices) {
                         dir(svc) {
-                            echo "Building ${svc} with Jib..."
-                            sh "mvn compile com.google.cloud.tools:jib-maven-plugin:3.4.0:build -Djib.to.image=affan341/${svc}:${GIT_COMMIT}"
+                            echo "Building and pushing ${svc} with Jib..."
+                            sh 'mvn compile com.google.cloud.tools:jib-maven-plugin:3.4.0:build'
                         }
                     }
                 }
