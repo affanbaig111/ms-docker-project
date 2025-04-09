@@ -10,8 +10,9 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       PGDATA: /data/postgres
+
     volumes:
-      - ./postgres-order:/data/postgres
+      - postgres_order_data:/data/postgres
     ports:
       - "5431:5431"
     command: ["postgres", "-c", "port=5431"]
@@ -26,10 +27,10 @@ services:
       POSTGRES_PASSWORD: postgres
       PGDATA: /data/postgres
     volumes:
-      - ./postgres-inventory:/data/postgres
-    ports:
-      - "5432:5432"
+      - postgres_inventory_data:/data/postgres
 
+    ports:
+      - "5434:5432"
   mongodb:
     image: mongo:6
     container_name: mongodb
@@ -37,7 +38,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - ./mongo-data:/data/db
+      - mongo_data:/data/db
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -181,8 +182,10 @@ services:
       - discovery-server
       - zipkin
       - api-gateway
-
-#
+volumes:
+   postgres_order_data:
+   postgres_inventory_data:
+   mongo_data:
 #networks:
 #  microservices-network:
 #    external: true
