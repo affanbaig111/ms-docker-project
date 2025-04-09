@@ -13,27 +13,26 @@
 #ENTRYPOINT ["java", "-jar", "app.jar"]
 
 # Stage 1: Build & Extract Layers
+# Stage 1: Build image
 FROM eclipse-temurin:17.0.4.1_1-jre AS builder
 
-WORKDIR extracted
+WORKDIR /extracted
 ADD target/*.jar app.jar
 
-# Extract layers for optimized caching
+# Extract Spring Boot layers for caching
 RUN java -Djarmode=layertools -jar app.jar extract
 
-# Stage 2: Build the final lightweight image
+# Stage 2: Runtime image
 FROM eclipse-temurin:17.0.4.1_1-jre
 
-WORKDIR application
+WORKDIR /application
 
-# Copy extracted JAR layers from the builder stage
-COPY --from=builder extracted/dependencies/ ./
-COPY --from=builder extracted/spring-boot-loader/ ./
-COPY --from=builder extracted/snapshot-dependencies/ ./
-COPY --from=builder extracted/application/ ./
+# Copy extracted layers from builder
+COPY --from=builder /extracted/dependencies/ ./
+COPY --from=builder /extracted/spring-boot-loader/ ./
+COPY --from=builder /extracted/snapshot-dependencies/ ./
+COPY --from=builder /extracted/application/ ./
 
-# Expose the port
 EXPOSE 8080
 
-# Use Spring Boot's built-in launcher
 ENTRYPOINT ["java", "org.springframework.boot.loader.JarLauncher"]
