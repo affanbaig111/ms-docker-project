@@ -101,6 +101,15 @@
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>3.4.0</version>
+                <configuration>
+                    <from>
+                        <image>eclipse-temurin:17.0.4.1_1-jre</image>
+                    </from>
+                    <to>
+                        <image>registry.hub.docker.com/affan341/${project.artifactId}</image>
+                    </to>
+                </configuration>
+
             </plugin>
         </plugins>
     </build>
