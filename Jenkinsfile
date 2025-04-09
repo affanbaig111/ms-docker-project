@@ -31,15 +31,15 @@ pipeline {
             }
         }
 
-        stage('Build API Gateway with Dockerfile') {
-            steps {
-                dir('api-gateway') {
-                    script {
-                        def tag = "affan341/api-gateway:${GIT_COMMIT}"
-                        echo "Building and pushing API Gateway with tag ${tag}"
-                        sh "docker build -t ${tag} ."
-                        sh "docker push ${tag}"
-                    }
+       steps {
+               dir('api-gateway') {
+                   echo "Packaging API Gateway JAR..."
+                   sh 'mvn clean package -DskipTests'
+
+                   echo "Building and pushing API Gateway Docker image..."
+                   sh 'docker build -t affan341/api-gateway:${GIT_COMMIT} .'
+                   sh 'docker push affan341/api-gateway:${GIT_COMMIT}'
+               }
                 }
             }
         }
