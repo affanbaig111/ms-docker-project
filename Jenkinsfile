@@ -61,5 +61,11 @@ pipeline {
                 }
             }
         }
+        stage('Run Docker Compose') {
+            steps {
+                echo "Starting up services with Docker Compose..."
+                sh 'docker-compose -f docker-compose.yml up -d'
+            }
+        }
     }
 }
