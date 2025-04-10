@@ -78,17 +78,18 @@ pipeline {
             }
         }
 
-      stage('Run Newman Tests') {
-          steps {
-              echo "Running Postman tests using Newman..."
-              sh '''
-                  docker run --rm \
-                      -v "$WORKSPACE/postman:/etc/newman" \
-                      postman/newman:alpine \
-                      run /etc/newman/testing.postman_collection.json
-              '''
-          }
-      }
+     stage('Run Newman Tests') {
+         steps {
+             echo "Running Postman tests using Newman (no volume)..."
+             sh '''
+                 docker run --rm \
+                     -w /etc/newman \
+                     postman/newman:alpine \
+                     sh -c "echo '$(cat postman/testing.postman_collection.json)' > /etc/newman/test.json && \
+                            newman run /etc/newman/test.json"
+             '''
+         }
+     }
 
 
         stage('Check Logs for notification Service') {
