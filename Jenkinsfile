@@ -78,17 +78,12 @@ pipeline {
             }
         }
 
-   stage('Run Newman Tests') {
-       steps {
-           echo "Running Postman tests using Newman (mounted collection)..."
-           sh '''
-               docker run --rm \
-                   -v "$PWD/postman:/etc/newman" \
-                   postman/newman:alpine \
-                   run /etc/newman/testing.postman_collection.json -r cli
-           '''
-       }
-   }
+  stage('Run Newman Tests') {
+      steps {
+          echo "Running Postman tests using Newman..."
+          sh 'newman run postman/testing.postman_collection.json -r cli'
+      }
+  }
 
 
     }
