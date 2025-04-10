@@ -30,7 +30,7 @@ services:
       - postgres_inventory_data:/data/postgres
 
     ports:
-      - "5434:5432"
+      - "5435:5432"
   mongodb:
     image: mongo:6
     container_name: mongodb

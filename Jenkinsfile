@@ -74,7 +74,21 @@ pipeline {
                 echo "Starting up services with Docker Compose..."
                 sh 'docker-compose -f docker-compose.yml up -d'
             }
-        }
+        }stage('Run Newman Tests') {
+             steps {
+                 echo "Running Postman tests using Newman..."
+                 sh '''
+                     mkdir -p newman_reports
+                     docker run --rm \
+                         -v "$PWD/postman:/etc/postman" \
+                         -v "$PWD/newman_reports:/etc/newman" \
+                         postman/newman:alpine \
+                         run /etc/postman/testing.postman_collection.json \
+                         --reporters cli,junit \
+                         --reporter-junit-export /etc/newman/report.xml
+                 '''
+             }
+         }
         stage('Check Logs for notification Service') {
             steps {
                 echo "Fetching logs for notification-service container..."
