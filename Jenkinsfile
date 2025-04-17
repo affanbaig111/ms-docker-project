@@ -8,6 +8,17 @@ pipeline {
     environment {
         DOCKERHUB_CREDENTIALS = credentials('docker-hub-creds')
     }
+   triggers {
+    githubPullRequest {
+        useGitHubHooks()
+        permitAll()
+        orgWhitelist(['affanbaig111']) // your GitHub username/org
+        admin('affanbaig111')
+        triggerPhrase('.*test this please.*')
+        onlyTriggerPhrase(false)
+        autoCloseFailedPullRequests(false)
+    }
+}
 
     stages {
         stage('Checkout Code') {
