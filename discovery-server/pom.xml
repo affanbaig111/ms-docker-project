@@ -82,10 +82,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
                 <groupId>com.google.cloud.tools</groupId>
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>3.2.1</version>
@@ -94,8 +90,10 @@
                         <image>eclipse-temurin:17.0.4.1_1-jre</image>
                     </from>
                     <to>
-                        <image>registry.hub.docker.com/affan341/${project.artifactId}</image>
+                        <!-- This will be overridden by -Dimage in the build.sh -->
+                        <image>${project.artifactId}</image>
                     </to>
+
                 </configuration>
             </plugin>
         </plugins>
