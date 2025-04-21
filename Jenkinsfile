@@ -8,27 +8,16 @@ pipeline {
     environment {
         DOCKERHUB_CREDENTIALS = credentials('docker-hub-creds')
     }
-   triggers {
-    githubPullRequest {
-        useGitHubHooks()
-        permitAll()
-        orgWhitelist(['affanbaig111']) // your GitHub username/org
-        admin('affanbaig111')
-        triggerPhrase('.*test this please.*')
-        onlyTriggerPhrase(false)
-        autoCloseFailedPullRequests(false)
-    }
-}
+
+
 
     stages {
-        stage('Checkout Code') {
-            steps {
-                checkout scmGit(
-                    branches: [[name: '*/master']],
-                    extensions: [],
-                    userRemoteConfigs: [[url: 'https://github.com/affanbaig111/ms-docker-project']]
-                )
-            }
+
+         stage('Checkout Code') {
+              steps {
+                  checkout scm
+                    }
+
         }
 
         stage('Login to Docker Hub') {
