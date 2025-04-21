@@ -9,15 +9,12 @@ pipeline {
         DOCKERHUB_CREDENTIALS = credentials('docker-hub-creds')
     }
 
-
-
     stages {
 
-         stage('Checkout Code') {
-              steps {
-                  checkout scm
-                    }
-
+        stage('Checkout Code') {
+            steps {
+                checkout scm
+            }
         }
 
         stage('Login to Docker Hub') {
@@ -78,15 +75,36 @@ pipeline {
             }
         }
 
-  stage('Run Newman Tests') {
-      steps {
-          echo "Running Postman tests using Newman..."
-          sh 'newman run postman/testing.postman_collection.json -r cli'
-      }
-  }
-
-
+        stage('Run Newman Tests') {
+            steps {
+                echo "Running Postman tests using Newman..."
+                sh 'newman run postman/testing.postman_collection.json -r cli'
+            }
+        }
     }
 
+    post {
+        always {
+            script {
+                def userChoice = input(
+                    id: 'StopConfirm',
+                    message: 'Pipeline finished. Do you want to stop and remove Docker services?',
+                    parameters: [
+                        choice(
+                            choices: ['Yes', 'No'],
+                            description: 'Choose an action',
+                            name: 'Stop'
+                        )
+                    ]
+                )
 
+                if (userChoice == 'Yes') {
+                    echo "Stopping Docker services..."
+                    sh 'docker-compose -f docker-compose.yml down -v --remove-orphans || true'
+                } else {
+                    echo "Leaving Docker services running..."
+                }
+            }
+        }
+    }
 }
