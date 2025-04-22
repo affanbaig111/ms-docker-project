@@ -18,7 +18,7 @@ services:
 
   postgres-inventory:
     image: postgres:16
-    container_name: inventory_postgres
+    container_name: postgres-inventory
     restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
@@ -116,7 +116,7 @@ services:
     restart: always
     environment:
       - SPRING_APPLICATION_NAME=order-service
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-order:5431/order-service
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-inventory:5432/order-service
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
@@ -131,7 +131,7 @@ services:
       - SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER=org.springframework.kafka.support.serializer.JsonSerializer
       - SPRING_KAFKA_PRODUCER_PROPERTIES_SPRING_JSON_TYPE_MAPPING=event:com.ms.order_service.event.OrderPlacedEvent
     depends_on:
-      - postgres-order
+      - postgres-inventory
       - discovery-server
       - kafka
       - zipkin

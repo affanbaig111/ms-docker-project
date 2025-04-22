@@ -39,11 +39,17 @@
     }
     }
     
-    stage('Run Newman Tests') {
-    steps {
-    echo "Running Postman tests using Newman..."
-    sh 'newman run postman/testing.postman_collection.json -r cli'
-    }
-    }
+   stage('Run Newman Tests') {
+       steps {
+           echo "Running Postman tests using Newman..."
+
+           script {
+               def result = sh(script: 'newman run postman/testing.postman_collection.json -r cli', returnStatus: true)
+               if (result != 0) {
+                   error "❌ Newman tests failed. Failing the pipeline."
+               }
+           }
+       }
+   }
     }
   }
