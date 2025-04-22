@@ -15,6 +15,8 @@ services:
     ports:
       - "5431:5432"
     command: ["postgres", "-c", "port=5432"]
+    networks:
+      - microservices-net
 
   postgres-inventory:
     image: postgres:16
@@ -29,6 +31,8 @@ services:
       - postgres_inventory_data:/data/postgres
     ports:
       - "5435:5432"
+    networks:
+      - microservices-net
 
   mongodb:
     image: mongo:6
@@ -38,6 +42,8 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    networks:
+      - microservices-net
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -45,6 +51,8 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - microservices-net
 
   kafka:
     image: confluentinc/cp-kafka:latest
@@ -61,6 +69,8 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
+    networks:
+      - microservices-net
 
   zipkin:
     image: openzipkin/zipkin:latest
@@ -68,6 +78,8 @@ services:
     restart: always
     ports:
       - "9411:9411"
+    networks:
+      - microservices-net
 
   discovery-server:
     image: discovery-server
@@ -79,6 +91,8 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
     depends_on:
       - zipkin
+    networks:
+      - microservices-net
 
   api-gateway:
     image: api-gateway
@@ -94,6 +108,8 @@ services:
     depends_on:
       - discovery-server
       - zipkin
+    networks:
+      - microservices-net
 
   product-service:
     image: product-service
@@ -110,6 +126,8 @@ services:
       - discovery-server
       - zipkin
       - api-gateway
+    networks:
+      - microservices-net
 
   order-service:
     image: order-service
@@ -137,6 +155,8 @@ services:
       - kafka
       - zipkin
       - api-gateway
+    networks:
+      - microservices-net
 
   inventory-service:
     image: inventory-service
@@ -158,6 +178,8 @@ services:
       - discovery-server
       - zipkin
       - api-gateway
+    networks:
+      - microservices-net
 
   notification-service:
     image: notification-service
@@ -182,8 +204,14 @@ services:
       - discovery-server
       - zipkin
       - api-gateway
+    networks:
+      - microservices-net
 
 volumes:
   postgres_order_data:
   postgres_inventory_data:
   mongo_data:
+
+networks:
+  microservices-net:
+    driver: bridge
