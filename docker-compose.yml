@@ -126,7 +126,7 @@ services:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
       - MANAGEMENT_TRACING_ENABLED=true
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=ms_kafka:9093
       - SPRING_KAFKA_TEMPLATE_DEFAULT_TOPIC=notificationTopic
       - SPRING_KAFKA_PRODUCER_KEY_SERIALIZER=org.apache.kafka.common.serialization.StringSerializer
       - SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER=org.springframework.kafka.support.serializer.JsonSerializer
@@ -171,7 +171,7 @@ services:
       - SERVER_PORT=8090
       - MANAGEMENT_TRACING_ENABLED=true
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
-      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:9092
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=ms_kafka:9093
       - SPRING_KAFKA_CONSUMER_KEY_DESERIALIZER=org.apache.kafka.common.serialization.StringDeserializer
       - SPRING_KAFKA_CONSUMER_VALUE_DESERIALIZER=org.springframework.kafka.support.serializer.JsonDeserializer
       - SPRING_KAFKA_CONSUMER_PROPERTIES_SPRING_JSON_TYPE_MAPPING=event:com.ms.notificationService.event.OrderPlacedEvent
