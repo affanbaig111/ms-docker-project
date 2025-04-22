@@ -1,35 +1,34 @@
 version: '3.8'
 
 services:
-  postgres-order:
-    image: postgres:16
-    container_name: postgres_order
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: order-service
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      PGDATA: /data/postgres
-    volumes:
-      - postgres_order_data:/data/postgres
-    ports:
-      - "5431:5432"
-    command: ["postgres", "-c", "port=5432"]
+#  postgres-order:
+#    image: postgres:16
+#    container_name: postgres_order
+#    restart: unless-stopped
+#    environment:
+#      POSTGRES_DB: order-service
+#      POSTGRES_USER: postgres
+#      POSTGRES_PASSWORD: postgres
+#      PGDATA: /data/postgres
+#    volumes:
+#      - postgres_order_data:/data/postgres
+#    ports:
+#      - "5431:5432"
+#    command: ["postgres", "-c", "port=5432"]
 
   postgres-inventory:
     image: postgres:16
     container_name: inventory_postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: inventory-service
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       PGDATA: /data/postgres
     volumes:
       - postgres_inventory_data:/data/postgres
+      - ./init-db:/docker-entrypoint-initdb.d
     ports:
-      - "5435:5432"
-
+      - "5432:5432"
   mongodb:
     image: mongo:6
     container_name: mongodb
