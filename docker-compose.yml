@@ -143,7 +143,7 @@ services:
     restart: always
     environment:
       - SPRING_APPLICATION_NAME=inventory-service
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-inventory:5435/inventory-service
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-inventory:5432/inventory-service
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
