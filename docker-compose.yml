@@ -117,7 +117,7 @@ services:
     restart: always
     environment:
       - SPRING_APPLICATION_NAME=product-service
-      - SPRING_DATASOURCE_URL=mongodb://mongodb:27017/product-service
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/product-service
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
       - MANAGEMENT_TRACING_ENABLED=true
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
@@ -128,6 +128,7 @@ services:
       - api-gateway
     networks:
       - microservices-net
+
 
   order-service:
     image: order-service
