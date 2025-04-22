@@ -62,7 +62,7 @@ pipeline {
         }
     }
 
-//     post {
+//   post {
 //         always {
 //             script {
 //                 def userChoice = input(
