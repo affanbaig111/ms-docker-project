@@ -1,20 +1,20 @@
   pipeline {
     agent any
-
+    
     tools {
     maven 'maven-tool'
-    }
-
+  }
+    
     environment {
     DOCKERHUB_CREDENTIALS = credentials('docker-hub-creds')
-    }
-
+  }
+    
     stages {
     stage('Checkout Code') {
     steps {
     checkout scm
-    }
-    }
+  }
+  }
     
     stage('Clean Up Old Docker Resources') {
     steps {
@@ -22,28 +22,28 @@
     sh 'docker-compose -f docker-compose.yml down -v --remove-orphans || true'
     sh 'docker system prune -af || true'
     sh 'docker volume prune -f || true'
-    }
-    }
+  }
+  }
     
     stage('Build Docker Images') {
     steps {
     echo 'Running build.sh to build Docker images locally...'
     sh './build.sh'
-    }
-    }
+  }
+  }
     
     stage('Run Docker Compose') {
     steps {
     echo "Starting up services with Docker Compose..."
     sh 'docker-compose -f docker-compose.yml up -d --no-build --no-recreate'
-    }
-    }
+  }
+  }
     
     stage('Run Newman Tests') {
     steps {
     echo "Running Postman tests using Newman..."
     sh 'newman run postman/testing.postman_collection.json -r cli'
-    }
-    }
-    }
+  }
+  }
+  }
   }
