@@ -1,41 +1,43 @@
 version: '3.8'
 
 services:
-#  postgres-order:
-#    image: postgres:16
-#    container_name: postgres_order
-#    restart: unless-stopped
-#    environment:
-#      POSTGRES_DB: order-service
-#      POSTGRES_USER: postgres
-#      POSTGRES_PASSWORD: postgres
-#      PGDATA: /data/postgres
-#    volumes:
-#      - postgres_order_data:/data/postgres
-#    ports:
-#      - "5431:5432"
-#    command: ["postgres", "-c", "port=5432"]
+  postgres-order:
+    image: postgres:16
+    container_name: postgres_order
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: order-service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      PGDATA: /data/postgres
+    volumes:
+      - postgres_order_data:/data/postgres
+    ports:
+      - "5431:5432"
+    command: ["postgres", "-c", "port=5432"]
 
   postgres-inventory:
     image: postgres:16
-    container_name: postgres-inventory
+    container_name: inventory_postgres
     restart: unless-stopped
     environment:
+      POSTGRES_DB: inventory-service
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       PGDATA: /data/postgres
     volumes:
       - postgres_inventory_data:/data/postgres
-      - ./init-db:/docker-entrypoint-initdb.d
     ports:
-      - "5432:5432"
-  ms_mongo_db:
-    image: mongo:latest
-    container_name: ms_mongo_db
+      - "5435:5432"
+
+  mongodb:
+    image: mongo:6
+    container_name: mongodb
+    restart: unless-stopped
     ports:
       - "27017:27017"
-    networks:
-      - microservices-net
+    volumes:
+      - mongo_data:/data/db
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -96,12 +98,15 @@ services:
   product-service:
     image: product-service
     container_name: product-service
+    restart: always
     environment:
-      - SPRING_DATA_MONGODB_URI=mongodb://ms_mongo_db:27017
-    networks:
-      - microservices-net
+      - SPRING_APPLICATION_NAME=product-service
+      - SPRING_DATASOURCE_URL=mongodb://mongodb:27017/product-service
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://discovery-server:8761/eureka
+      - MANAGEMENT_TRACING_ENABLED=true
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
     depends_on:
-      - ms_mongo_db
+      - mongodb
       - discovery-server
       - zipkin
       - api-gateway
@@ -112,7 +117,7 @@ services:
     restart: always
     environment:
       - SPRING_APPLICATION_NAME=order-service
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-inventory:5432/order-service
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-order:5432/order-service
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
@@ -127,7 +132,7 @@ services:
       - SPRING_KAFKA_PRODUCER_VALUE_SERIALIZER=org.springframework.kafka.support.serializer.JsonSerializer
       - SPRING_KAFKA_PRODUCER_PROPERTIES_SPRING_JSON_TYPE_MAPPING=event:com.ms.order_service.event.OrderPlacedEvent
     depends_on:
-      - postgres-inventory
+      - postgres-order
       - discovery-server
       - kafka
       - zipkin
@@ -181,7 +186,4 @@ services:
 volumes:
   postgres_order_data:
   postgres_inventory_data:
-
-networks:
-  microservices-net:
-    driver: bridge
+  mongo_data:
