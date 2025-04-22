@@ -17,6 +17,14 @@ pipeline {
             }
         }
 
+    stage('Clean Up Old Docker Resources') {
+                 steps {
+                     echo "Stopping and removing old containers/volumes..."
+                     sh 'docker-compose -f docker-compose.yml down -v --remove-orphans || true'
+                     sh 'docker system prune -af || true'
+                     sh 'docker volume prune -f || true'
+                 }
+
 //         stage('Login to Docker Hub') {
 //             steps {
 //                 withCredentials([usernamePassword(credentialsId: 'docker-hub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
@@ -24,6 +32,8 @@ pipeline {
 //                 }
 //             }
 //         }
+
+
          stage('Build Docker Images') {
                     steps {
                         echo 'Running build.sh to build Docker images locally...'
@@ -34,13 +44,7 @@ pipeline {
 
 
 
-        stage('Clean Up Old Docker Resources') {
-            steps {
-                echo "Stopping and removing old containers/volumes..."
-                sh 'docker-compose -f docker-compose.yml down -v --remove-orphans || true'
-                sh 'docker system prune -af || true'
-                sh 'docker volume prune -f || true'
-            }
+
         }
 
         stage('Run Docker Compose') {
